@@ -1,0 +1,104 @@
+
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <script src="https://cdn-webgl.wrld3d.com/wrldjs/dist/latest/wrld.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet.css" rel="stylesheet" />
+
+    <link href="https://cdn-webgl.wrld3d.com/wrldjs/addons/resources/latest/css/wrld.css" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+    <link href="https://cdn-webgl.wrld3d.com/wrldjs/addons/polygon_editor/latest/polygon_editor.css" rel="stylesheet" />
+<script src="https://cdn-webgl.wrld3d.com/wrldjs/addons/polygon_editor/latest/polygon_editor.js"></script>
+<script src="https://cdn-webgl.wrld3d.com/wrldjs/addons/indoor_control/latest/indoor_control.js"></script>
+  </head>
+  
+  <body>
+  <div style="position: relative">
+    <div id="widget-container" class="wrld-widget-container" style="left: inherit;"></div>
+    <div id="map" style="height: 400px"></div>
+    <script>
+      
+      function setIndoorControlVisbility(indoorControl, visibility) {
+        if (indoorControl._indoorControl) {
+          indoorControl._indoorControl.style.visibility = visibility ? "inherit" : "hidden";
+        }
+      }
+
+    
+      var map = L.Wrld.map("map", "ec256ed45e21eb529e13b2b656d730e5", {
+        center: [37.782276519634706, -122.40476157895424],
+        zoom: 17,
+        indoorsEnabled: true
+      });
+
+      const options = {
+        draw: {
+          polygon: {
+            allowIntersection: false,
+            allowOverlap: false,
+            showArea: true,
+            shapeOptions: {
+              color: '#3375CC',
+              weight: 5
+            }
+          }
+        },
+        edit: {
+          poly: {
+            allowIntersection: false,
+            allowOverlap: false
+          }
+        }
+      };
+
+      var polygonEditor = new WrldIndoorPolygonEditor(map, options);
+      var indoorControl = new WrldIndoorControl("widget-container", map);
+
+      var counter = 0;
+
+      map.on(L.Draw.Event.CREATED, function (e) {
+        var layer = e.layer;
+        if (layer instanceof L.Polygon) {
+          layer.setUserData(counter++);
+          console.log("Created Polygon with userdata: " + layer.getUserData() + layer.getLatLngs());
+
+          layer.on("click", function(e) {
+            console.log("Polygon data: " + e.target.getUserData() + " Points: " + e.target.getLatLngs());
+          });
+        }
+      });
+    
+      map.on(L.Draw.Event.DELETED, function (e) {
+        var layers = e.layers;
+        layers.eachLayer(layer => {
+          if (layer instanceof L.Polygon) {
+            console.log("Deleted Polygon with userdata: " + layer.getUserData());
+          }
+        })
+      });
+    
+      //We need to hide indoor control so that while we are creating vertexes,
+      //we dont create some on one floor and change floor then create some
+      //on different floors.
+      map.on(L.Draw.Event.EDITSTART, function (e) {
+        setIndoorControlVisbility(indoorControl, false);
+      });
+    
+      map.on(L.Draw.Event.EDITSTOP, function (e) {
+        setIndoorControlVisbility(indoorControl, true);
+      });
+    
+      map.on(L.Draw.Event.DRAWSTART, function (e) {
+        setIndoorControlVisbility(indoorControl, false);
+      });
+    
+      map.on(L.Draw.Event.DRAWSTOP, function (e) {
+        setIndoorControlVisbility(indoorControl, true);
+      });
+
+    </script>
+
+  </div>
+  </body>
+</html>

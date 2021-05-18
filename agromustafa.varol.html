@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WTCS472');</script>
+    <!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.css" rel="stylesheet">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Cache-Control" content="max-age=86400, must-revalidate">
+    <title>Agro dashboard</title>
+  <link href="css/main_9c80103487eb5fdcf578.css" rel="stylesheet"></head>
+  <body>
+    <!-- Google Tag Manager (noscript) -->  
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WTCS472"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <header>
+      <nav class="theme">
+        <div class="nav-wrapper">
+          <a class="brand-logo left"></a>
+          <ul class="center">
+            <li>
+              <a href="polygons">My polygons</a>
+            </li>
+            <li>
+              <a href="satellite" class="active">Satellite imagery</a>
+            </li>
+            <li>
+              <a href="weather">Weather data</a>
+            </li>
+          </ul>
+          <div class="absolut-right">
+            <a href="lauth/logout" ><i class="material-icons">exit_to_app</i></a>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div class="row component-container">
+        <div class="component-container__left">
+          <div class="row">
+            <div class="col s12">
+              <div class="card">
+                <div class="card-content">
+                  <div id="map-products">
+                    <div class="input-field">
+                      <select id="select1">
+                        <option value="truecolor">True color</option>
+                        <option value="falsecolor">False color</option>
+                        <option value="ndvi">NDVI</option>
+                        <option value="evi">EVI</option>
+                      </select>
+                      <!-- <label>Product</label> -->
+                    </div>
+                  </div>
+              <div class="layer-changer">
+                <ul class="layer-changer__items">
+                  <li class="layer-changer__item layer-changer__item--active">
+                    <div class="layer-changer__item">
+                      <button type="button" class="layer-changer__btn">
+                      <img src="img/layer-osm.jpg" width="80" height="80" alt="Satellite"><p class="layer-changer__title">OSM</p></button>
+                    </div>
+                  </li>
+                  <li class="layer-changer__item">
+                    <div class="layer-changer__item">
+                      <button type="button" class="layer-changer__btn">
+                      <img src="img/layer-satellite.jpg" width="80" height="80" alt="Satellite"><p class="layer-changer__title">Satellite</p></button>
+                    </div>
+                  </li>
+                </ul>
+<!--                 <div class="layer-changer__item layer-changer__item--main">
+                  <button type="button" class="layer-changer__btn">
+                  <img src="img/layer-satellite.jpg" width="80" height="80" alt="Satellite"><p class="layer-changer__title"></p></button>
+                </div> -->
+              </div>
+                  <div id="map" class="map"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s3">
+              <div class="card">
+                <div class="card-content">
+                  <h5 class="statistic__title">Statistics:</h5>
+                  <table class="highlight responsive-table ndvi-statistic">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>NDVI</th>
+                        <th>EVI</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="responsive-table__cell">max</td>
+                        <td class="ndvi-statistic__max responsive-table__cell"></td>
+                        <td class="evi-statistic__max responsive-table__cell"></td>
+                      </tr>
+                      <tr>
+                        <td class="responsive-table__cell">mean</td>
+                        <td class="ndvi-statistic__mean responsive-table__cell"></td>
+                        <td class="evi-statistic__mean responsive-table__cell"></td>
+                      </tr>
+                      <tr>
+                        <td class="responsive-table__cell">min</td>
+                        <td class="ndvi-statistic__min responsive-table__cell"></td>
+                        <td class="evi-statistic__min responsive-table__cell"></td>
+                      </tr>
+                      <tr>
+                        <td class="responsive-table__cell">deviation</td>
+                        <td class="ndvi-statistic__deviation responsive-table__cell"></td>
+                        <td class="evi-statistic__deviation responsive-table__cell"></td>
+                      </tr>
+                      <tr>
+                        <td class="responsive-table__cell">num</td>
+                        <td class="ndvi-statistic__num responsive-table__cell"></td>
+                        <td class="evi-statistic__num responsive-table__cell"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col s9 center-align">
+              <div class="card">
+                <div class="card-content">
+                  <h5 class="statistic__title">Historical NDVI</h5>
+                  <div id="graphic-container"></div>
+                  <div class="row">
+                    <div class="interval-dates">
+                      <div class="input-field interval-dates__field">
+                        <input type="text" class="datepicker" id="date-from" name="date-from">
+                        <label for="date-from">Date from</label>
+                        <i class="material-icons interval-dates__icon">grid_on</i>
+                      </div>
+                      <div class="input-field interval-dates__field">
+                        <input type="text" class="datepicker" id="date-to" name="date-to">
+                        <label for="date-to">Date to</label>
+                        <i class="material-icons interval-dates__icon">grid_on</i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--div class="col xl3 l3 m12 s12 sidebar-right"-->
+        <div class="component-container__right">
+          <div class="row">
+            <div class="col s12">
+              <ul id="tabs-swipe-demo" class="tabs text-primary">
+                <li  class="tab col s6">
+                  <a href="#polygons-tab" class="active">Polygons</a>
+                </li>
+                <li class="tab col s6">
+                  <a href="#satellite-tab" class="">Imagery</a>
+                </li>
+              </ul>
+            </div>
+            <div class="component-container__right-items">
+              <div id="polygons-tab">
+                <div class="polygons-collection collection col s12"></div>
+              </div>
+              <div id="satellite-tab">
+                <div class="imagery-collection collection col s12"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <div id="response-modal" class="modal">
+    </div>
+    <template id="polygon-info-item">
+    <div class="valign-wrapper">
+      <div class="col s8">
+        <div>
+          <span class="black-text card-content__name truncate"></span>
+        </div>
+        <div>
+          <span class="text-lighten-1 card-content__area "></span>
+        </div>
+      </div>
+      <div class="col s4 map-container">
+      </div>
+    </div>
+    </template>
+    <template id="satellite-imagery-item">
+    <div class="valign-wrapper">
+      <div class="col s7">
+        <div>
+          <span class="black-text card-content__date truncate"></span>
+        </div>
+        <div>
+          <span class="card-content__resolution"></span>
+        </div>
+      </div>
+      <div class="col s5 map-container">
+        <div class="right-align">
+          <span class="card-content__clouds"></span><i class="material-icons inline-icon">cloud_queue</i>
+        </div>
+        <div class="right-align">
+          <span class="card-content__coverage"></span><i class="material-icons inline-icon">photo_size_select_large</i>
+        </div>
+      </div>
+    </div>
+    </template>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/leaflet.js"></script>
+  <script type="text/javascript" src=""></script></body>
+</html>

@@ -1,0 +1,177 @@
+<html>
+<head>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/css/ol.css" type="text/css">
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
+
+
+	<link href="map.css" rel="stylesheet">
+	<script src="map.js"></script>
+
+	
+	<script type="text/javascript">
+	  (function() {
+		emailjs.init("user_LTsAxeffahi1511GIEzJC");
+		})();
+		var kordinat="";
+	 
+	// Selected marker
+		var selected = null;
+		// Vars
+		var draw, snap, modify, source, map, marker1, popup, popup_click, poly_style, poly;
+		// Polygon
+		var polygon = [[20.922006711063837,51.43669800424428],[19.733289867618534,52.20726906566372],[19.414365836450276,52.570004719533785],[19.71879332074725,53.13028210472103],[20.67556541425201,53.32986826845254],[21.0524756329054,53.06064262010884],[21.50186858591521,53.29522444847305],[22.48763377316254,53.025780599876015],[22.661592335617947,52.47297790597722],[22.05273736702401,51.96676446116692],[20.922006711063837,51.43669800424428]];
+		// Coordinates
+		var point1 = [28.002902, 41.228850];
+		var point2 = [20.500002, 40.000050];
+
+		var popup_html = `
+		<div class="mpopup">
+			<div class="mpopup-img">
+				<img src="data/game.svg">
+			</div>
+			<div class="mpopup-txt">
+				Map marker html description
+			</div>
+		</div>
+		`
+  
+
+		window.onload = () => {
+			goster("hidden");
+			// Map center
+			map = CreateMap(point1, 'map');
+
+			// Hide popup
+			popup = CreatePopup(map, '', 'popup');
+			popup_click = CreatePopup(map, '', 'popup_click');
+
+			// Marker
+			//marker1 = CreateMarker(point1, 'marker2.png', 'Marker', popup_html);
+			source = CreateSource();
+			CreateLayer(map, source, null, marker1);
+
+			// Show polygon
+			// poly_style = PolygonStyle('#0099ff22','#0099ff', '#0099ff', [2,6]);
+			// poly = CreatePolygon(polygon, 'Dostawa', 'Obszar dostawy');
+			// source = CreateSource();
+			// CreateLayer(map, source, poly_style, poly, 1)
+
+			// Draw polygon
+			poly_style = PolygonStyle('#55cc0055','#55cc00', '#55cc00', [2,4,6]);
+			source = CreateSource();
+			DrawPolygon(map, source);
+			ModifyPolygon(map, source);
+			SnapPolygon(map, source);
+			CreateLayer(map, source, poly_style, null, 1)
+
+			// Hover popup
+			map.on('pointermove', function (evt)
+			{
+				var feature = map.forEachFeatureAtPixel(evt.pixel, function (feat, layer) {
+					return feat;
+				});
+				if (map.hasFeatureAtPixel(evt.pixel) === true)
+				{
+					if(selected != feature)
+					{
+						let html = feature.get('desc');
+
+						if(html !== undefined)
+						{
+							popup = CreatePopup(map, html, 'popup');
+							popup.setPosition(evt.coordinate);
+
+							// From marker position
+							// let postion = ol.proj.transform([feature.get('lon'),feature.get('lat')], 'EPSG:4326', 'EPSG:3857');
+							// popup.setPosition(postion);
+
+							MarkerOnTop(feature, true);
+						}
+					}
+				}
+				else
+				{
+					source.getFeatures().forEach((f) => {
+						MarkerOnTop(f, false);
+					});
+					popup.setPosition(undefined);
+				}
+			});
+
+			// Map onchange event
+			source.on('change', function()
+			{
+				console.log("Map onchange event");
+
+				// Get created polygon
+				let json = GetPolygon(source);
+				console.log("Created polygon: ", json);
+				var obj = JSON.parse(json);
+		    
+		
+  		   for(i=0;i<obj.features[0].geometry.coordinates[0].length-1;i++)
+	   		for(j=0;j<2;j++)
+		 		kordinat += obj.features[0].geometry.coordinates[0][i][j] + "<br>";
+				 goster("visible");		
+
+				GetFeatures(source).forEach((f) => {
+					console.log("Feature", f);
+				})
+			});
+
+	}
+
+function goster(str){
+	document.getElementById("sendMail").style.visibility = str;
+}
+
+
+
+function sendMail(params){
+
+
+if(document.getElementById("fromName").value!=""){
+  var tempParams={
+    from_name:document.getElementById("fromName").value,
+    message:kordinat,
+};
+
+  var status = document.getElementById("my-form-status");
+	emailjs.send("service_iijfnod","template_evj5s1d",tempParams)
+ 	.then(function(res){
+  	status.innerHTML = "Polygon kordinatları tarfımıza gonderildi en kısa zmanda bilgilendirleceksiniz!";
+ 	})
+	 setTimeout(() => { window.location.reload(); }, 4000);
+	
+}
+else{
+	var status = document.getElementById("my-form-status");
+	status.innerHTML="Ad kısmını boş gecemessiniz";
+}
+
+}
+
+	</script>
+</head>
+
+</body>
+	
+    <!-- Map -->
+	<div id="map" style="float:left; width: 100%; height: 800px;">
+	<!-- Popup -->
+	<div id="popup"></div>
+	<div id="popup_click"></div>
+    <p id="jsonP"></p>
+	<div id="sendMail" >
+	
+		<input type="text" id="fromName"  placeholder = "Ad giriniz" required />
+		<button onclick="sendMail()">Send</button>
+	
+	</div>
+	
+    <p id="my-form-status"></p>
+
+</body>
+
+</html>
